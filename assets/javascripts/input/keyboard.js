@@ -2,7 +2,7 @@ define(function() {
 
 	var keys = {};
 	var handle = {};
-	
+
 	function handle_keydown(args) {
 		keys[args.keyCode] = true;
 	}
@@ -20,6 +20,11 @@ define(function() {
 		return keys[keyCode];
 	}
 
+	function bindCheckFor(key) {
+		var keyCode = key.toUpperCase().charCodeAt(0);
+		return isKeyPressed.bind(null, keyCode);
+	}
+
 	function isAnyKeyPressed() {
 		return Object.keys(keys).some(function(key) {
 			return keys[key];
@@ -29,7 +34,7 @@ define(function() {
 	function checkCommands() {
 		var self = this;
 		Object.keys(self.commands).forEach(function(key) {
-			if(handle.isKeyPressed(key)) {
+			if (handle.isKeyPressed(key)) {
 				self.commands[key]();
 			}
 		});
@@ -37,7 +42,7 @@ define(function() {
 
 	function mixinKeyCheck(target) {
 
-		if(!target.commands) {
+		if (!target.commands) {
 			return;
 		}
 
@@ -54,7 +59,8 @@ define(function() {
 		isKeyPressed: isKeyPressed,
 		isAnyKeyPressed: isAnyKeyPressed,
 		listen: listen,
-		mixinKeyCheck: mixinKeyCheck
+		mixinKeyCheck: mixinKeyCheck,
+		bindCheckFor: bindCheckFor
 	};
 
 	return handle;
