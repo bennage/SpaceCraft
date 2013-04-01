@@ -6,7 +6,7 @@ define(function(require) {
 	var tile_space = require('tiles/space');
 	var resolution = require('resolution');
 
-	var dome = require('building/dome');
+	var station = require('station');
 
 	var cellSize = resolution.cellSize;
 	var width = resolution.width;
@@ -56,7 +56,7 @@ define(function(require) {
 	function initialize(loop) {
 		assets.files = ['tiles.fw.png'];
 		assets.load(function() {
-			dome(cache, 0, 0);
+			station(cache);
 			loop();
 		});
 	}

@@ -1,14 +1,16 @@
 define(function(require) {
 
+
+
 	var wall = require('tiles/station-wall');
 	var floor = require('tiles/station-floor');
-	var door = require('tiles/door');
+	// var door = require('tiles/door');
 
-	var hall = require('building/hall');
+	// var hall = require('building/hall');
 
 	var min_radius = 3;
 	var max_radius = 8;
-	var doors = [1, 4];
+	// var doors = [1, 4];
 
 	function createWallIn(knownSpace, x, y) {
 		knownSpace[x] = knownSpace[x] || {};
@@ -52,16 +54,20 @@ define(function(require) {
 
 	// note: this alogorithm ineffeciently overwrites 
 	// previously created tiles.
-	return function(knownSpace, ox, oy) {
+	return function(knownSpace, ox, oy, width, height) {
 		var wallAt = createWallIn.bind(null, knownSpace);
 		var floorAt = createFloorIn.bind(null, knownSpace);
 
+		width = width || max_radius;
+		height = height || max_radius;
+		max_radius = Math.min(width, height)/2;
+
 		// determine desire size
 		var radius = Math.floor(Math.random() * (max_radius - min_radius)) + min_radius;
-		var x_min = ox - radius;
-		var x_max = ox + radius;
-		var y_min = oy - radius;
-		var y_max = oy + radius;
+		var x_min = ox;
+		var x_max = ox + 2 * radius;
+		var y_min = oy;
+		var y_max = oy + 2 * radius;
 
 		// determine if space is available
 		// x if not, reduce size
@@ -104,23 +110,23 @@ define(function(require) {
 			}
 		}
 
-		// create doors
-		var door_count = (Math.random() * (doors[1] - doors[0])) + doors[1];
-		for (var i = 0; i < door_count; i++) {
-			knownSpace[radius][-1] = wall(radius, -1);
-			knownSpace[radius][0] = door(radius, 0);
-			knownSpace[radius][1] = wall(radius, 1);
-		}
+		// // create doors
+		// var door_count = (Math.random() * (doors[1] - doors[0])) + doors[1];
+		// for (var i = 0; i < door_count; i++) {
+		// 	knownSpace[radius][-1] = wall(radius, -1);
+		// 	knownSpace[radius][0] = door(radius, 0);
+		// 	knownSpace[radius][1] = wall(radius, 1);
+		// }
 
-		hall(knownSpace, radius + 1, 0, Math.PI / 2);
+		// hall(knownSpace, radius + 1, 0, Math.PI / 2);
 
 
-		// adjust sprites
-		adjustSprites(knownSpace, {
-			x_min: x_min,
-			x_max: x_max + 12,
-			y_min: y_min,
-			y_max: y_max
-		});
+		// // adjust sprites
+		// adjustSprites(knownSpace, {
+		// 	x_min: x_min,
+		// 	x_max: x_max + 12,
+		// 	y_min: y_min,
+		// 	y_max: y_max
+		// });
 	};
 });
