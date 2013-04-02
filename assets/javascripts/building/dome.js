@@ -54,20 +54,27 @@ define(function(require) {
 
 	// note: this alogorithm ineffeciently overwrites 
 	// previously created tiles.
-	return function(knownSpace, ox, oy, width, height) {
+	return function(knownSpace, left, top, width, height) {
 		var wallAt = createWallIn.bind(null, knownSpace);
 		var floorAt = createFloorIn.bind(null, knownSpace);
 
-		width = width || max_radius;
-		height = height || max_radius;
-		max_radius = Math.min(width, height)/2;
+		max_radius = Math.floor(Math.min(width, height) / 2);
+		if (min_radius > max_radius) min_radius = max_radius;
 
 		// determine desire size
 		var radius = Math.floor(Math.random() * (max_radius - min_radius)) + min_radius;
-		var x_min = ox;
-		var x_max = ox + 2 * radius;
-		var y_min = oy;
-		var y_max = oy + 2 * radius;
+
+		// center the origin inside the allocated space
+		var x_offset = Math.floor((width - radius * 2) / 2);
+		var y_offset = Math.floor((height - radius * 2) / 2);
+
+		var ox = left + radius + x_offset;
+		var oy = top + radius + y_offset;
+
+		var x_min = left;
+		var x_max = left + 2 * radius;
+		var y_min = top;
+		var y_max = top + 2 * radius;
 
 		// determine if space is available
 		// x if not, reduce size
