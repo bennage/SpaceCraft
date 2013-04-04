@@ -116,7 +116,7 @@ define(function(require) {
 			room = rooms[i];
 			// console.log(room.top + ' ' + room.bottom + ' ' + room.left + ' ' + room.right);
 			var should_dome = (randomBetween(1, 3) > 2);
-			if (should_dome) {
+			if (room.right - room.left > 6 && room.bottom - room.top > 6) {
 				dome(knownSpace, room.left, room.top, room.right - room.left, room.bottom - room.top);
 			} else {
 				for (x = room.left; x <= room.right; x++) {
