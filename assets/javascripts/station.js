@@ -1,12 +1,11 @@
 define(function(require) {
 
+	var BinaryTree = require('btree');
 	var randomBetween = require('randomBetween');
 	var floor = require('tiles/station-floor');
 	var dome = require('building/dome');
 
-	var rooms = [];
-
-	var max_size = 48;
+	var max_size = 64;
 	var min_size = 12;
 
 	// the overall width and height that comes close to
@@ -14,36 +13,34 @@ define(function(require) {
 	var width = randomBetween(min_size, max_size);
 	var height = randomBetween(min_size, max_size);
 
-	rooms[0] = {
+	var roomTree = new BinaryTree({
 		left: 0,
 		right: width,
 		top: 0,
 		bottom: height
-	};
+	});
 
-	var count = 8;
+	function build() {
 
-	function getNode() {
-		var largeRooms = [];
-		var room;
-		for (var l = rooms.length - 1; l >= 0; l--) {
-			room = rooms[l];
+		function chance() {
+			return randomBetween(0, 1) > 0.4;
+		}
 
-			if (room.right - room.left > 5 || room.bottom - room.top > 5) {
-				largeRooms.push(room);
+		function construct(current) {
+			var splits = splitInTwo(current.item);
+
+			if (splits[0]) {
+				current.addLeft(splits[0]);
+				if (chance()) construct(current.left);
+			}
+
+			if (splits[1]) {
+				current.addRight(splits[1]);
+				if (chance()) construct(current.right);
 			}
 		}
-		var index = randomBetween(0, largeRooms.length - 1);
-		return largeRooms[index];
-	}
 
-	for (var i = 0; i < count; i++) {
-		var old_node = getNode();
-		if (!old_node) break;
-		var new_nodes = splitInTwo(old_node);
-		if (new_nodes.length === 0) break;
-		var index = rooms.indexOf(old_node);
-		rooms.splice(index, 1, new_nodes[0], new_nodes[1]);
+		construct(roomTree);
 	}
 
 	function splitInTwo(node) {
@@ -59,7 +56,6 @@ define(function(require) {
 		}
 
 		if (split_options.length === 0) {
-			debugger;
 			return [];
 		}
 
@@ -109,6 +105,9 @@ define(function(require) {
 			knownSpace[x1] = knownSpace[x1] || {};
 			knownSpace[x1][y1] = floor(x1, y1);
 		}
+
+		build();
+		var rooms = roomTree.leaves();
 
 		console.log(rooms.length + ' rooms');
 
